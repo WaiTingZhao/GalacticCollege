@@ -16,14 +16,22 @@ studentTerm = pd.read_csv("Student term info.csv")
 # st.write(studentInfo)
 # st.write(studentTerm)
 
+#Merging the data from courseData and studentCourse
 joinedDataset = studentCourse.merge(courseData, on=["Term code", "Course section number"], how="left")
 st.write(joinedDataset)
 joinedDataset = joinedDataset.dropna(subset=["Course title"])
 
-aggregatedDataset = joinedDataset.groupby(["Course title", "Term code"]).aggregate({"Fake ID":"count"}).reset_index()
+aggregatedDataset = joinedDataset.groupby(["Course title", "Term code","Course section number"]).aggregate({"Fake ID":"count"}).reset_index()
 st.write(aggregatedDataset)
 aggregatedDataset = aggregatedDataset.rename(columns={"Fake ID":"Students"})
 
-
-
 st.dataframe(aggregatedDataset)
+
+#cleaning_studentCourse_Data
+#Remove all the grade results of "F" and "W"
+
+#Remove all the Course number with "None"
+
+#Change the "Online Hybrid" into "Blended" or in reverse. Only keep "In-Person", "Online", "Online Hybrid", "Independent Studies" under the column of Instruction mode.
+
+#Change the "course section number" into the correct "course title" name.
