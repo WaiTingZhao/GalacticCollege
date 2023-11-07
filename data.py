@@ -1,6 +1,5 @@
 import streamlit as st
 import pandas as pd
-import plotly.express as px
 
 # open the data
 courseData = pd.read_csv("Course section info.csv")
@@ -18,20 +17,23 @@ studentTerm = pd.read_csv("Student term info.csv")
 
 #Merging the data from courseData and studentCourse
 joinedDataset = studentCourse.merge(courseData, on=["Term code", "Course section number"], how="left")
-st.write(joinedDataset)
+#st.write(joinedDataset)
 joinedDataset = joinedDataset.dropna(subset=["Course title"])
-
-aggregatedDataset = joinedDataset.groupby(["Course title", "Term code","Course section number"]).aggregate({"Fake ID":"count"}).reset_index()
-st.write(aggregatedDataset)
+aggregatedDataset = joinedDataset.groupby(["Course title", "Term code","Course section number", "Instruction mode"]).aggregate({"Fake ID":"count"}).reset_index()
+#st.write(aggregatedDataset)
 aggregatedDataset = aggregatedDataset.rename(columns={"Fake ID":"Students"})
 
 st.dataframe(aggregatedDataset)
 
-#cleaning_studentCourse_Data
 #Remove all the grade results of "F" and "W"
-
 #Remove all the Course number with "None"
+grade_column = 'Grade'
+joinedDataset[grade_column] = joinedDataset[grade_column].str.strip().str.upper()
+filteredDataset = joinedDataset[~joinedDataset[grade_column].isin(['F', 'W'])]
+st.dataframe(filteredDataset)
 
-#Change the "Online Hybrid" into "Blended" or in reverse. Only keep "In-Person", "Online", "Online Hybrid", "Independent Studies" under the column of Instruction mode.
+#Only keep "In-Person", "Online", "Online Hybrid", "Independent Studies" under the column of Instruction mode.
+instruction_mode_column = 'Instruction mode'
+#Change "Online Hybrid" into "Blended"
 
 #Change the "course section number" into the correct "course title" name.
