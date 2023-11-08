@@ -37,29 +37,49 @@ filteredDataset = joinedDataset[~joinedDataset[grade_column].isin(['F', 'W'])]
 instruction_mode_column = 'Instruction mode'
 filteredDataset[instruction_mode_column] = filteredDataset[instruction_mode_column].str.replace("Online Hybrid", "Blended (Online & In-Person)")
 
-#Rename Fake ID to 'Students'
-filteredDataset["Year"]= filteredDataset["Term_x"].str.split().str[1]
-filteredDataset["Year"]= pd.to_numeric(filteredDataset["Year"])
-st.dataframe(filteredDataset)
-filteredDataset = filteredDataset.groupby(["Course title"]).aggregate({"Fake ID": "count"}).reset_index()
-filteredDataset = filteredDataset.rename(columns={"Fake ID": "Students"})
-
-
 #Create Interface
 st.set_page_config(layout="wide")
 st.title("Popular Courses")
 st.sidebar.title("Filters")
 
+#Rename Fake ID to 'Students',converted term_x to year.
+filteredDataset["Year"]= filteredDataset["Term_x"].str.split().str[1]
+filteredDataset["Year"]= pd.to_numeric(filteredDataset["Year"])
+
 #Select the Visualization
-vis = st.sidebar.radio("Select a visualization",
-                       options=["Instruction mode",
-                                "Term_X"])
+mode = st.sidebar.radio("Choose an Instructinon Mode",
+                       options=["In-Person",
+                                "Blended (Online & In-Person)",
+                                "Online",
+                                "Independent Studies",
+                                "Total"])
+
+Year = st.sidebar.slider("Choose your range:",
+                          min_value=filteredDataset["Year"].min(),
+                          max_value=filteredDataset["Year"].max(),
+                          value=[filteredDataset["Year"].min(),filteredDataset["Year"].max()]
+                          )
+
+#Filter data according to Year
+mask=(filteredDataset["Year"]>=Year[0]) & (filteredDataset["Year"]<=Year[1])
+filteredDataset=filteredDataset[mask]
+
+if mode!="Total":
+    mask=filteredDataset["Instruction mode"]==mode
+    filteredDataset=filteredDataset[mask]
+
+
+filteredDataset = filteredDataset.groupby(["Course title"]).aggregate({"Fake ID": "count"}).reset_index()
+filteredDataset = filteredDataset.rename(columns={"Fake ID": "Students"})
 
 
 
-df = pd.DataFrame(filteredDataset)
-sorted_data = df.sort_values(by='Students', ascending=True).head(10)
-fig = px.bar(sorted_data, x='Students', y='Course title')
+#st.dataframe(filteredDataset)
+
+
+
+df = pd.DataFrame(filteredDataset.nlargest(10,"Students"))
+#st.dataframe(df)
+fig = px.bar(df, x='Course title', y='Students')
 st.plotly_chart(fig)
-st.dataframe(filteredDataset)
 
