@@ -47,7 +47,7 @@ filteredDataset["Year"]= filteredDataset["Term_x"].str.split().str[1]
 filteredDataset["Year"]= pd.to_numeric(filteredDataset["Year"])
 
 #Select the Visualization
-mode = st.sidebar.radio("Choose an Instructinon Mode",
+mode = st.sidebar.radio("Choose an Instruction Mode",
                        options=["In-Person",
                                 "Blended (Online & In-Person)",
                                 "Online",
@@ -64,6 +64,7 @@ Year = st.sidebar.slider("Choose your range:",
 mask=(filteredDataset["Year"]>=Year[0]) & (filteredDataset["Year"]<=Year[1])
 filteredDataset=filteredDataset[mask]
 
+#Add total under instructional Mode
 if mode!="Total":
     mask=filteredDataset["Instruction mode"]==mode
     filteredDataset=filteredDataset[mask]
@@ -73,10 +74,7 @@ filteredDataset = filteredDataset.groupby(["Course title"]).aggregate({"Fake ID"
 filteredDataset = filteredDataset.rename(columns={"Fake ID": "Students"})
 
 
-
 #st.dataframe(filteredDataset)
-
-
 
 df = pd.DataFrame(filteredDataset.nlargest(10,"Students"))
 #st.dataframe(df)
