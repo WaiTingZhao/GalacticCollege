@@ -37,8 +37,9 @@ filteredDataset = joinedDataset[~joinedDataset[grade_column].isin(['F', 'W'])]
 instruction_mode_column = 'Instruction mode'
 filteredDataset[instruction_mode_column] = filteredDataset[instruction_mode_column].str.replace("Online Hybrid", "Blended (Online & In-Person)")
 
-
-#filteredDataset["Year"]= filteredDataset["Term_x"].str.split()[1]
+#Rename Fake ID to 'Students'
+filteredDataset["Year"]= filteredDataset["Term_x"].str.split().str[1]
+filteredDataset["Year"]= pd.to_numeric(filteredDataset["Year"])
 st.dataframe(filteredDataset)
 filteredDataset = filteredDataset.groupby(["Course title"]).aggregate({"Fake ID": "count"}).reset_index()
 filteredDataset = filteredDataset.rename(columns={"Fake ID": "Students"})
@@ -53,6 +54,8 @@ st.sidebar.title("Filters")
 vis = st.sidebar.radio("Select a visualization",
                        options=["Instruction mode",
                                 "Term_X"])
+
+
 
 df = pd.DataFrame(filteredDataset)
 sorted_data = df.sort_values(by='Students', ascending=True).head(10)
