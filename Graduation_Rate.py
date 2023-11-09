@@ -11,5 +11,4 @@ studentTerm = pd.read_csv("Student term info.csv")
 
 #Merging the data from studentTerm and studentInfo
 joinedDataset = studentTerm.merge(studentInfo, on=["Fake ID"], how="left")
-selectedColumns = joinedDataset[["Fake ID"]]
 st.write(joinedDataset)
