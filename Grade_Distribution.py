@@ -45,7 +45,6 @@ fig_selected_course_pie.update_layout(
     legend_title="Grades",
     legend_traceorder='reversed'
 )
-
 st.plotly_chart(fig_selected_course_pie)
 
 
