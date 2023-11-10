@@ -12,12 +12,10 @@ studentTerm = pd.read_csv("Student term info.csv")
 #Merging the data from courseData and studentCourse
 joinedDataset = studentCourse.merge(courseData, on=["Term code", "Course section number"], how="left")
 joinedDataset = joinedDataset.dropna(subset=["Course title"])
-aggregatedDataset = joinedDataset.groupby(["Course title", "Term code","Course section number"]).aggregate({"Fake ID":"count"}).reset_index()
+aggregatedDataset = joinedDataset.groupby(["Course title", "Term_x", "Grade"]).aggregate({"Fake ID":"count"}).reset_index()
 
-#Remove all the grade results of "F" and "W"
-#Remove all the Course number with "None"
-grade_column = 'Grade'
-joinedDataset[grade_column] = joinedDataset[grade_column].str.strip().str.upper()
-filteredDataset = joinedDataset[~joinedDataset[grade_column].isin(['F', 'W'])]
-st.write(filteredDataset)
+#Convert terms to years
+aggregatedDataset["Year"]= aggregatedDataset["Term_x"].str.split().str[1]
+aggregatedDataset["Year"]= pd.to_numeric(aggregatedDataset["Year"])
 
+st.write(aggregatedDataset)
