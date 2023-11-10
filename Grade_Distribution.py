@@ -8,3 +8,5 @@ studentCourse = pd.read_csv("Student - course section info.csv")
 studentCareer = pd.read_csv("Student career info.csv")
 studentInfo = pd.read_csv("Student info.csv")
 studentTerm = pd.read_csv("Student term info.csv")
+
+#Update check tj 15:47
