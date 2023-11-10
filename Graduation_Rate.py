@@ -45,9 +45,21 @@ selected_year_range = st.sidebar.slider('Select Year Range',
 # Convert to integer to ensure consistent types
 selected_year_range = tuple(map(int, selected_year_range))
 
-# Filter the data based on the selected year range
+# Conditionally display multiselector only when "Academic Plan" is selected
+if selection == 'Academic Plan':
+    # Multiselect widget for academic plans with default as all plans selected
+    default_academic_plans = studentCareer['Academic plan'].unique()
+    selected_academic_plans = st.sidebar.multiselect('Select Academic Plans', default_academic_plans, default_academic_plans)
+else:
+    selected_academic_plans = None
+
+# Filter the data based on the selected year range and academic plans
 filtered_data = studentCareer[(studentCareer['Start effective year'] >= selected_year_range[0]) &
                               (studentCareer['Start effective year'] <= selected_year_range[1])]
+
+# Apply additional filter for academic plans if selected
+if selected_academic_plans is not None:
+    filtered_data = filtered_data[filtered_data['Academic plan'].isin(selected_academic_plans)]
 
 # Group by selected category
 if selection == 'Degree':
