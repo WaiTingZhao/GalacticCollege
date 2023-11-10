@@ -32,12 +32,16 @@ selected_course_data = aggregatedDataset[aggregatedDataset['Course title'] == se
 # Group by grade and calculate the count for the selected course
 grade_distribution_selected_course = selected_course_data.groupby('Grade').size().reset_index(name='Count')
 
+grade_distribution_selected_course["Grade"]=grade_distribution_selected_course['Grade'].astype('category')
+grade_distribution_selected_course["Grade"]=grade_distribution_selected_course['Grade'].cat.reorder_categories(['A', 'A-', 'B+', 'B', 'B-', 'C+', 'C', 'C-', 'D+', 'D', 'F', 'W'])
+order=['A', 'A-', 'B+', 'B', 'B-', 'C+', 'C', 'C-', 'D+', 'D', 'F', 'W']
 # Calculate percentages
 total_count = grade_distribution_selected_course['Count'].sum()
 grade_distribution_selected_course['Percentage'] = (grade_distribution_selected_course['Count'] / total_count) * 100
 
 # Create a pie chart for the selected course's grade distribution
 fig_selected_course_pie = px.pie(grade_distribution_selected_course, values='Percentage', names='Grade',
+                                 category_orders={"Grade":order},
                                  title=f'Grade Distribution for {selected_course}', hole=0.3)
 
 # Set category order for the legend (letter grades)
