@@ -18,4 +18,10 @@ aggregatedDataset = joinedDataset.groupby(["Course title", "Term_x", "Grade"]).a
 aggregatedDataset["Year"]= aggregatedDataset["Term_x"].str.split().str[1]
 aggregatedDataset["Year"]= pd.to_numeric(aggregatedDataset["Year"])
 
-st.write(aggregatedDataset)
+#st.write(aggregatedDataset)
+#Select the Visualization
+Year = st.sidebar.slider("Choose your range:",
+                          min_value=filteredDataset["Year"].min(),
+                          max_value=filteredDataset["Year"].max(),
+                          value=[filteredDataset["Year"].min(),filteredDataset["Year"].max()]
+                          )
