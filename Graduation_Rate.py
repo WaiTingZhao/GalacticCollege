@@ -64,7 +64,7 @@ if selected_academic_plans is not None:
 # Group by selected category
 if selection == 'Degree':
     grouped_data = filtered_data.groupby('Degree')
-    title = 'Graduation Rate Based on Degree By Percentage %'
+    title = 'Graduation Rate Based on Degree By Percentages %'
 elif selection == 'Academic Plan':
     grouped_data = filtered_data.groupby('Academic plan')
     title = 'Graduation Rate Based on Academic Plan'
