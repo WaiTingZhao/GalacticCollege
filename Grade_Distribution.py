@@ -9,4 +9,15 @@ studentCareer = pd.read_csv("Student career info.csv")
 studentInfo = pd.read_csv("Student info.csv")
 studentTerm = pd.read_csv("Student term info.csv")
 
-#Update check tj 15:47
+#Merging the data from courseData and studentCourse
+joinedDataset = studentCourse.merge(courseData, on=["Term code", "Course section number"], how="left")
+joinedDataset = joinedDataset.dropna(subset=["Course title"])
+aggregatedDataset = joinedDataset.groupby(["Course title", "Term code","Course section number"]).aggregate({"Fake ID":"count"}).reset_index()
+
+#Remove all the grade results of "F" and "W"
+#Remove all the Course number with "None"
+grade_column = 'Grade'
+joinedDataset[grade_column] = joinedDataset[grade_column].str.strip().str.upper()
+filteredDataset = joinedDataset[~joinedDataset[grade_column].isin(['F', 'W'])]
+st.write(filteredDataset)
+
