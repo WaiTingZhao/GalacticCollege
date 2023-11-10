@@ -20,9 +20,6 @@ aggregatedDataset["Year"]= pd.to_numeric(aggregatedDataset["Year"])
 
 st.write(aggregatedDataset)
 
-
-# Assuming you've loaded and processed your dataset as 'aggregatedDataset' here
-
 # Create a sidebar for course selection
 selected_course = st.sidebar.selectbox("Select a Course", aggregatedDataset['Course title'].unique())
 
@@ -48,7 +45,8 @@ fig_selected_course_pie = px.pie(grade_distribution_selected_course, values='Per
 fig_selected_course_pie.update_layout(
     legend=dict(traceorder='normal'),
     legend_title="Grades",
-    legend_traceorder='reversed'
 )
 
 st.plotly_chart(fig_selected_course_pie)
+
+
