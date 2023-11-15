@@ -2,6 +2,18 @@ import streamlit as st
 import pandas as pd
 import plotly.express as px
 
+genre = st.radio(
+    "Select The Questions",
+    ["Question 1: Popular Courses", "Question 2: Graduation Rates", "Question 3: Grade Distribution"],
+    captions = ["View the popular courses.", "View the graduation rates.", "View the grade distribution."])
+
+if genre == 'Question 1: Popular Courses':
+   st.write("Popular Courses")
+if genre == 'Question 2: Graduation Rates':
+    st.write("Graduation Rates")
+else:
+    st.write("Grade Distribution")
+
 # open the data
 courseData = pd.read_csv("Course section info.csv")
 studentCourse = pd.read_csv("Student - course section info.csv")
