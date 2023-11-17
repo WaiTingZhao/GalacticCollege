@@ -144,31 +144,36 @@ elif genre == 'Question 2: Graduation Rates':
 
     # Group by selected category
     if selection == 'Degree':
+        # Extract the selected year range from the tuple
+        start_year, end_year = selected_year_range
+
         grouped_data = filtered_data.groupby('Degree')
         title = 'Graduation Rate Based on Degree By Percentage %'
+        caption = f"Below displays the Graduation Rate based on Degree by percentage % within the specified year range from {start_year} to {end_year}."
     elif selection == 'Academic Plan':
         grouped_data = filtered_data.groupby('Academic plan')
         title = 'Graduation Rate Based on Academic Plan'
+        caption = ""  # You can customize the caption for Academic Plan if needed
 
     # Calculate graduation rate
     graduated_count = grouped_data['Graduated'].sum()
     enrolled_count = grouped_data['Enrolled'].sum()
     graduation_rate = graduated_count / enrolled_count * 100
+    graduation_rate = graduation_rate.round(2)  # Round to 2 decimal points
 
-    # Debugging information
-    # st.write("Graduated Count:", graduated_count)
-    # st.write("Enrolled Count:", enrolled_count)
-
-    # Create a DataFrame for Plotly
+    # Create a DataFrame for Plotly with rounded values
     graduation_rate_df = pd.DataFrame({
         'Group': graduation_rate.index,
-        'Graduation Rate': graduation_rate.values
+        'Graduation Rate': graduation_rate.values.round(2)  # Round to 2 decimal points
     })
 
     # Display the results using Plotly with inverted axes
-    fig = px.bar(graduation_rate_df, x='Graduation Rate', y='Group', text='Graduation Rate',
+    fig = px.bar(graduation_rate_df, x='Graduation Rate', y='Group',
+                 text=graduation_rate_df['Graduation Rate'].apply(lambda x: f'{x:.2f}%'),
                  labels={'Graduation Rate': 'Graduation Rate (%)'})
     fig.update_layout(title=title, xaxis_title='Graduation Rate (%)', yaxis_title=selection)
+
+    # Display the Plotly chart
     st.plotly_chart(fig)
 
 else:
