@@ -46,6 +46,14 @@ if genre == 'Question 1: Popular Courses':
     filteredDataset["Year"] = filteredDataset["Term_x"].str.split().str[1]
     filteredDataset["Year"] = pd.to_numeric(filteredDataset["Year"])
 
+
+    # Function to generate caption based on selected mode
+    def generate_caption(mode, year_range):
+        if mode == "Total":
+            return f"Below are the top 10 popular courses (All Instruction Modes) within year {year_range[0]} - {year_range[1]}."
+        else:
+            return f"Below are the top 10 popular {mode} courses within year {year_range[0]} - {year_range[1]}."
+
     # Select the Visualization
     mode = st.sidebar.radio("Choose an Instruction Mode",
                             options=["In-Person",
@@ -73,6 +81,9 @@ if genre == 'Question 1: Popular Courses':
     filteredDataset = filteredDataset.rename(columns={"Fake ID": "Students"})
 
     # st.dataframe(filteredDataset)
+
+    # Display caption based on selected mode
+    st.write(generate_caption(mode, Year))
 
     df = pd.DataFrame(filteredDataset.nlargest(10, "Students"))
     # st.dataframe(df)
