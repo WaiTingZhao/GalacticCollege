@@ -12,19 +12,12 @@ genre = st.sidebar.radio(
 
 if genre == 'Question 1: Popular Courses':
 
-    # open the data
+    # Load your datasets
     courseData = pd.read_csv("Course section info.csv")
     studentCourse = pd.read_csv("Student - course section info.csv")
     studentCareer = pd.read_csv("Student career info.csv")
     studentInfo = pd.read_csv("Student info.csv")
     studentTerm = pd.read_csv("Student term info.csv")
-
-    # show the data
-    # st.write(courseData)
-    # st.write(studentCourse)
-    # st.write(studentCareer)
-    # st.write(studentInfo)
-    # st.write(studentTerm)
 
     # Merging the data from courseData and studentCourse
     joinedDataset = studentCourse.merge(courseData, on=["Term code", "Course section number"], how="left")
@@ -197,30 +190,43 @@ else:
     aggregatedDataset["Year"] = aggregatedDataset["Term_x"].str.split().str[1]
     aggregatedDataset["Year"] = pd.to_numeric(aggregatedDataset["Year"])
 
-
-    # Assuming you've loaded and processed your dataset as 'aggregatedDataset' here
-
     # Create a sidebar for course selection
     selected_course = st.sidebar.selectbox("Select a Course", aggregatedDataset['Course title'].unique())
 
-    # Filter the data for the selected course
-    selected_course_data = aggregatedDataset[aggregatedDataset['Course title'] == selected_course]
+    # Create a sidebar for year selection
+    selected_year_range = st.sidebar.slider(
+        "Select a Year Range",
+        min_value=int(aggregatedDataset["Year"].min()),
+        max_value=int(aggregatedDataset["Year"].max()),
+        value=(int(aggregatedDataset["Year"].min()), int(aggregatedDataset["Year"].max()))
+    )
 
-    # Group by grade and calculate the count for the selected course
-    grade_distribution_selected_course = selected_course_data.groupby('Grade').size().reset_index(name='Count')
+    # Filter the data for the selected course and year range
+    selected_data = aggregatedDataset[(aggregatedDataset['Course title'] == selected_course) &
+                                      (aggregatedDataset['Year'] >= selected_year_range[0]) &
+                                      (aggregatedDataset['Year'] <= selected_year_range[1])]
 
-    grade_distribution_selected_course["Grade"] = grade_distribution_selected_course['Grade'].astype('category')
-    grade_distribution_selected_course["Grade"] = grade_distribution_selected_course['Grade'].cat.reorder_categories(
+    # Group by grade and calculate the count for the selected course and year range
+    grade_distribution_selected_data = selected_data.groupby('Grade').size().reset_index(name='Count')
+
+    grade_distribution_selected_data["Grade"] = grade_distribution_selected_data['Grade'].astype('category')
+    grade_distribution_selected_data["Grade"] = grade_distribution_selected_data['Grade'].cat.reorder_categories(
         ['A', 'A-', 'B+', 'B', 'B-', 'C+', 'C', 'C-', 'D+', 'D', 'F', 'W'])
     order = ['A', 'A-', 'B+', 'B', 'B-', 'C+', 'C', 'C-', 'D+', 'D', 'F', 'W']
+
     # Calculate percentages
-    total_count = grade_distribution_selected_course['Count'].sum()
-    grade_distribution_selected_course['Percentage'] = (grade_distribution_selected_course['Count'] / total_count) * 100
+    total_count = grade_distribution_selected_data['Count'].sum()
+    grade_distribution_selected_data['Percentage'] = (grade_distribution_selected_data['Count'] / total_count) * 100
+
+    # Create a caption
+    st.write(
+        f"## Grade Distribution for {selected_course} within the Year ({selected_year_range[0]} - {selected_year_range[1]})")
 
     # Create a pie chart for the selected course's grade distribution
-    fig_selected_course_pie = px.pie(grade_distribution_selected_course, values='Percentage', names='Grade',
+    fig_selected_course_pie = px.pie(grade_distribution_selected_data, values='Percentage', names='Grade',
                                      category_orders={"Grade": order},
-                                     title=f'Grade Distribution for {selected_course}', hole=0.3)
+                                     # title=f'Grade Distribution for {selected_course} ({selected_year_range[0]} - {selected_year_range[1]})',
+                                     hole=0.3)
 
     # Set category order for the legend (letter grades)
     fig_selected_course_pie.update_layout(
@@ -228,4 +234,7 @@ else:
         legend_title="Grades",
     )
 
+    # Display the pie chart
     st.plotly_chart(fig_selected_course_pie)
+
+
