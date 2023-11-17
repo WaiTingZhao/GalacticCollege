@@ -46,7 +46,7 @@ if genre == 'Question 1: Popular Courses':
     instruction_mode_column = 'Instruction mode'
     filteredDataset[instruction_mode_column] = filteredDataset[instruction_mode_column].str.replace("Online Hybrid",
                                                                                                     "Blended (Online & In-Person)")
-    st.title("Popular Courses")
+    st.title("Top 10 Popular Courses")
     st.sidebar.title("Filters")
 
     # Rename Fake ID to 'Students',converted term_x to year.
@@ -179,7 +179,7 @@ elif genre == 'Question 2: Graduation Rates':
     st.plotly_chart(fig)
 
 else:
-
+    st.title("Grade Distribution Pie Chart")
     # open the data
     courseData = pd.read_csv("Course section info.csv")
     studentCourse = pd.read_csv("Student - course section info.csv")
